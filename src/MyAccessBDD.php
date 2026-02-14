@@ -52,8 +52,9 @@ class MyAccessBDD extends AccessBDD {
             case "etat" :
                 // select portant sur une table contenant juste id et libelle
                 return $this->selectTableSimple($table);
-            case "" :
-            // return $this->uneFonction(parametres);
+            case "utilisateur" :
+                $res = $this->login($champs);
+                return ($res ? [$res] : null);
             default:
                 // cas général
                 return $this->selectTuplesOneTable($table, $champs);
@@ -119,7 +120,7 @@ class MyAccessBDD extends AccessBDD {
             case "revue": return $this->deleteRevue($champs);
             case "commande":
                 return $this->deleteCommande($champs);
-            case "examplaire":
+            case "exemplaire":
                 return $this->deleteCommande($champs);
             default:
                 // cas général
@@ -327,6 +328,29 @@ class MyAccessBDD extends AccessBDD {
             $requete .= " ORDER BY c.dateCommande DESC";
             return $this->conn->queryBDD($requete, ['idR' => $champs['id']]);
         }
+    }
+
+    private function login(?array $champs): ?array {
+        $email = $champs['email'] ?? null;
+        $pwd = $champs['password'] ?? null;
+
+        if ($email === null || $pwd === null)
+            return null;
+
+        $requete = "SELECT u.id, u.email, u.password, u.idservice, s.libelle 
+                FROM utilisateur u 
+                JOIN service s ON u.idservice = s.id 
+                WHERE u.email = :email";
+
+        $user = $this->conn->queryBDD($requete, ['email' => $email]);
+
+        if ($user && count($user) > 0) {
+            if (password_verify($pwd, $user[0]['password'])) {
+                unset($user[0]['password']);
+                return $user[0];
+            }
+        }
+        return null;
     }
 
     /**
