@@ -1,0 +1,343 @@
+{
+  "info": {
+    "_postman_id": "9303f3df-b68f-49e0-b61e-638e262dd107",
+    "name": "Tests API MediatekDocuments",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "49255805",
+    "_collection_link": "https://go.postman.co/collection/49255805-9303f3df-b68f-49e0-b61e-638e262dd107?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "https://projetsisis.alwaysdata.net/api_mediatekdocuments/livre",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {\r",
+              "    pm.response.to.have.status(200);\r",
+              "});\r",
+              "pm.test(\"Le premier résultat a pour id \\\"00017\\\" (ordre ABC)\", function () {\r",
+              "    var jsonData = pm.response.json();\r",
+              "    pm.expect(jsonData[\"result\"][0].id).to.eql(\"00017\");\r",
+              "});\r",
+              "\r",
+              "pm.test(\"Tous les livres ont une id non vide\", function () {\r",
+              "    var jsonData = pm.response.json();\r",
+              "\r",
+              "    jsonData.result.forEach(function(livre){\r",
+              "    pm.expect(livre.id).to.be.a(\"string\").and.to.not.be.empty;\r",
+              "    });\r",
+              "});\r",
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "https://projetsisis.alwaysdata.net/api_mediatekdocuments/livre",
+          "protocol": "https",
+          "host": [
+            "projetsisis",
+            "alwaysdata",
+            "net"
+          ],
+          "path": [
+            "api_mediatekdocuments",
+            "livre"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "https://projetsisis.alwaysdata.net/api_mediatekdocuments/exemplaire/{\"id\":\"00017\"}",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {\r",
+              "    pm.response.to.have.status(200);\r",
+              "});\r",
+              "\r",
+              "pm.test(\"Le libellé de l'état existe pour l'exemplaire filtré\", function () {\r",
+              "    var jsonData = pm.response.json();\r",
+              "\r",
+              "    jsonData.result.forEach(function(exemplaire){\r",
+              "    pm.expect(exemplaire.libelleEtat).to.be.a(\"string\").and.to.not.be.empty;\r",
+              "    });\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "https://projetsisis.alwaysdata.net/api_mediatekdocuments/exemplaire/{\"id\":\"00017\"}",
+          "protocol": "https",
+          "host": [
+            "projetsisis",
+            "alwaysdata",
+            "net"
+          ],
+          "path": [
+            "api_mediatekdocuments",
+            "exemplaire",
+            "{\"id\":\"00017\"}"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "https://projetsisis.alwaysdata.net/api_mediatekdocuments/commandedocument",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "const res = pm.response.json();\r",
+              "const auth = pm.request.headers.get(\"Authorization\");\r",
+              "\r",
+              "pm.test(\"Ajout OK\", () => {\r",
+              "    pm.response.to.have.status(200);\r",
+              "    pm.expect(res.code).to.equal(200);\r",
+              "});\r",
+              "\r",
+              "if (res.result == 1) {\r",
+              "    pm.sendRequest({\r",
+              "        url: `https://projetsisis.alwaysdata.net/api_mediatekdocuments/commandedocument/{\"id\":\"67676\"}`,\r",
+              "        method: 'DELETE',\r",
+              "        header: { 'Authorization': auth }\r",
+              "    }, (err, r) => pm.test(\"Rollback OK\", () => pm.expect(r.code).to.equal(200)));\r",
+              "}"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "urlencoded",
+          "urlencoded": [
+            {
+              "key": "champs",
+              "value": "{\"id\":\"67676\",\"dateCommande\":\"2025-06-06\",\"montant\":55,\"nbExemplaire\":5,\"idLivreDvd\":\"00001\"}",
+              "type": "text",
+              "uuid": "3e80b0a2-4ee1-4a7a-b88a-2ff32bbdffbb"
+            }
+          ]
+        },
+        "url": {
+          "raw": "https://projetsisis.alwaysdata.net/api_mediatekdocuments/commandedocument",
+          "protocol": "https",
+          "host": [
+            "projetsisis",
+            "alwaysdata",
+            "net"
+          ],
+          "path": [
+            "api_mediatekdocuments",
+            "commandedocument"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "https://projetsisis.alwaysdata.net/api_mediatekdocuments/livre/%7B%22id%22:%2267676%22%7D",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "const resMain = pm.response.json();\r",
+              "\r",
+              "pm.test(\"Suppression OK\", () => {\r",
+              "    pm.response.to.have.status(200);\r",
+              "    pm.expect(resMain.code).to.equal(200);\r",
+              "});\r",
+              "\r",
+              "pm.sendRequest({\r",
+              "    url: 'https://projetsisis.alwaysdata.net/api_mediatekdocuments/livre/%7B%22id%22:%2267676%22%7D',\r",
+              "    method: 'GET'\r",
+              "}, (err, res) => {\r",
+              "    pm.test(\"Vérification : Le livre n'existe plus en BDD\", () => {\r",
+              "        pm.expect(res.json().code).to.not.equal(200);\r",
+              "    });\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        },
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [
+              "const auth = pm.request.headers.get(\"Authorization\");\r",
+              "\r",
+              "const nouveauLivre = {\r",
+              "    id: \"67676\",\r",
+              "    titre: \"Livre intéressant\",\r",
+              "    image: \"\",\r",
+              "    idRayon: \"R0001\",\r",
+              "    idPublic: \"00001\",\r",
+              "    idGenre: \"00001\",\r",
+              "    ISBN: \"\",\r",
+              "    auteur: \"Auteur intéressant\", \r",
+              "    collection: \"\"\r",
+              "};\r",
+              "\r",
+              "pm.sendRequest({\r",
+              "    url: 'https://projetsisis.alwaysdata.net/api_mediatekdocuments/livre',\r",
+              "    method: 'POST',\r",
+              "    header: { \r",
+              "        'Authorization': auth,\r",
+              "    },\r",
+              "    body: {\r",
+              "        urlencoded: [{ key: \"champs\", value: JSON.stringify(nouveauLivre) }]\r",
+              "    }\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "body": {
+          "mode": "urlencoded",
+          "urlencoded": []
+        },
+        "url": {
+          "raw": "https://projetsisis.alwaysdata.net/api_mediatekdocuments/livre/%7B%22id%22:%2267676%22%7D",
+          "protocol": "https",
+          "host": [
+            "projetsisis",
+            "alwaysdata",
+            "net"
+          ],
+          "path": [
+            "api_mediatekdocuments",
+            "livre",
+            "%7B%22id%22:%2267676%22%7D"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "https://projetsisis.alwaysdata.net/api_mediatekdocuments/commandedocument?id=67676",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Mise à jour du suivi réussie\", function () {\r",
+              "    pm.response.to.have.status(200);\r",
+              "});"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "method": "PUT",
+        "header": [],
+        "body": {
+          "mode": "urlencoded",
+          "urlencoded": [
+            {
+              "key": "champs",
+              "value": "{\"idsuivi\":\"00003\"}",
+              "type": "text",
+              "uuid": "1de2a95b-5469-4010-a9e0-0715bbef7fc6"
+            }
+          ]
+        },
+        "url": {
+          "raw": "https://projetsisis.alwaysdata.net/api_mediatekdocuments/commandedocument?id=67676",
+          "protocol": "https",
+          "host": [
+            "projetsisis",
+            "alwaysdata",
+            "net"
+          ],
+          "path": [
+            "api_mediatekdocuments",
+            "commandedocument"
+          ],
+          "query": [
+            {
+              "key": "id",
+              "value": "67676"
+            }
+          ]
+        }
+      },
+      "response": []
+    }
+  ],
+  "auth": {
+    "type": "basic",
+    "basic": [
+      {
+        "key": "password",
+        "value": "Media86!2026",
+        "type": "string"
+      },
+      {
+        "key": "username",
+        "value": "admin@mediatek.fr",
+        "type": "string"
+      }
+    ]
+  },
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ]
+}
